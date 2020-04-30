@@ -6,7 +6,8 @@ from informatics_utils import create_hgnc_gene_name_dict
 app = Flask(__name__)
 CORS(app)
 
-server: str = 'localhost'
+# server: str = 'localhost'
+server: str = '165.227.89.140'
 editor_ids: dict = graphql_utils.get_editor_ids(server)
 authors_dict: dict = graphql_utils.get_authors(server)
 reference_dict: dict = graphql_utils.get_literature_references(server)
