@@ -7,9 +7,18 @@ from informatics_utils import create_hgnc_gene_name_dict
 app = Flask(__name__)
 CORS(app)
 
+def write_to_local():
+    return 'localhost'
+
+def write_to_prod():
+    return '165.227.89.140'
+
+def write_to_dev():
+    return '161.35.115.213'
+
 # server: str = 'localhost'
 # server: str = '161.35.115.213'
-server: str = '165.227.89.140'
+server: str = write_to_dev()
 
 editor_ids: dict = get_editor_ids(server)
 authors_dict: dict = graphql_utils_extra.get_authors(server)

@@ -1,13 +1,10 @@
-import os
 import datetime
 
 from graphql_utils import send_query, fix_author_id, get_reference_from_pmid_by_metapub, create_reference_mutation, \
     create_journal_mutation, create_AddLiteratureReferenceJournal_mutation, get_authors_names, create_author_mutation, \
     create_AddLiteratureReferenceAuthors_mutation, get_omnigene_id_from_entrez_id, createEditableStatement_with_date, \
-    get_gene_id_from_entrez_id, create_myGeneInfo_gene, create_uniprot_entry
+    get_gene_id_from_entrez_id, create_myGeneInfo_gene, create_uniprot_entry, get_unique_graph_id
 from informatics_utils import fetch_gene_id_by_gene_name, fetch_gene_info_by_gene_id, populate_omni_gene
-
-
 
 
 def get_omnigene_ID_by_name(name:str,server:str)->str:
@@ -104,9 +101,9 @@ def handle_references(author_dict, journal_dict, reference_dict, pmid_array):
 # list: [String]!): String
 def createEditableSynonymList(gene_name:str, field:str, editor_id:str) -> (str,str):
     now = datetime.datetime.now()
-    edit_date:str = now.strftime("%Y-%m-%d-%H-%M-%S-%f")
-    id:str = 'esl_' + now.strftime("%Y%m%d%H%M%S%f")
-    ede_id:str = 'esle_' + now.strftime("%Y%m%d%H%M%S%f")
+    edit_date:str = now.strftime("%Y-%m-%d-%H-%M-%S")
+    id:str = get_unique_graph_id('esl_')
+    ede_id:str = get_unique_graph_id('esle_')
 
     s = f'''{id} : createEditableSynonymList(editDate: \\"{edit_date}\\", field: \\"{field}\\", id: \\"{id}\\", list:[\\"{gene_name}\\"] ),'''
     s += f'{ede_id}: addEditableSynonymListEditor(editor:[\\"{editor_id}\\"], id:\\"{id}\\" ),'
@@ -125,7 +122,7 @@ def create_new_omniGene(omni_gene:dict, jax_gene_dict:dict, curation_item:dict, 
     # edit_date: str = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
 
     statement1: str = gene_description
-    (m, id1) = createEditableStatement_with_date(statement1,field1,editor_id,datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f"),pmid_extractor, reference_dict, journal_dict, author_dict)
+    (m, id1) = createEditableStatement_with_date(statement1,field1,editor_id,datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),pmid_extractor, reference_dict, journal_dict, author_dict)
     s += m
     s += f'addOmniGeneGeneDescription(geneDescription:[\\"{id1}\\"], id:\\"{id}\\" ),'
 
@@ -133,13 +130,13 @@ def create_new_omniGene(omni_gene:dict, jax_gene_dict:dict, curation_item:dict, 
 
         # create OncogenicCategory EditableStatement
     field2: str = 'OncogenicCategory_' + id
-    (m, id2) = createEditableStatement_with_date(statement2,field2,editor_id,datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f"),pmid_extractor, reference_dict, journal_dict, author_dict)
+    (m, id2) = createEditableStatement_with_date(statement2,field2,editor_id,datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),pmid_extractor, reference_dict, journal_dict, author_dict)
     s += m
     s += f'addOmniGeneOncogenicCategory(id:\\"{id}\\", oncogenicCategory:[\\"{id2}\\"] ),'
 
     canonicalTranscript = ''
     ct_field = 'canonicalTranscript_' + id
-    (m, id3) = createEditableStatement_with_date(canonicalTranscript, ct_field, editor_id, datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f"), pmid_extractor, reference_dict, journal_dict, author_dict)
+    (m, id3) = createEditableStatement_with_date(canonicalTranscript, ct_field, editor_id, datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S"), pmid_extractor, reference_dict, journal_dict, author_dict)
     s += m
     s += f'addOmniGeneTranscript(id:\\"{id}\\", transcript:[\\"{id3}\\"] ),'
 

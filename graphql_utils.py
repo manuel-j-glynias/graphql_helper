@@ -544,15 +544,15 @@ def write_references(es_id:str, description:str,pmid_extractor:callable,referenc
                 ref_id = reference_dict[pubmed]
             reference_string += '\\"' + ref_id + '\\",'
         reference_string += ']'
-        ref_id2 = 'esref_' + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+        ref_id2 = get_unique_graph_id('esref_')
         s += f'{ref_id2}: addEditableStatementReferences(id:\\"{es_id}\\", references:{reference_string}),'
     return s
 
 def createEditableStatement(statement:str, field:str, editor_id:str,pmid_extractor:callable,reference_dict:dict,journal_dict:dict,author_dict:dict) -> (str,str):
     now = datetime.datetime.now()
-    edit_date:str = now.strftime("%Y-%m-%d-%H-%M-%S-%f")
-    id:str = 'es_' + now.strftime("%Y%m%d%H%M%S%f")
-    ede_id:str = 'ese_' + now.strftime("%Y%m%d%H%M%S%f")
+    edit_date:str = now.strftime("%Y-%m-%d-%H-%M-%S")
+    id:str = get_unique_graph_id('es_')
+    ede_id:str = get_unique_graph_id('ese_')
     s = f'''{id} : createEditableStatement(editDate: \\"{edit_date}\\", field: \\"{field}\\", id: \\"{id}\\",statement: \\"{statement}\\"),'''
     s += f'{ede_id}: addEditableStatementEditor(editor:[\\"{editor_id}\\"], id:\\"{id}\\" ),'
     s += write_references(id,statement,pmid_extractor,reference_dict,journal_dict,author_dict)
@@ -737,7 +737,7 @@ def write_users(users_dict:dict, server:str)->None:
     user_ids: dict = {}
     mutation_payload: str = ''
     for name, password in users_dict.items():
-        id: str = 'user_' + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+        id: str = get_unique_graph_id('user_')
         user_ids[name] = id
         is_admin: bool = True
         mutation_payload += f'{id}: createUser(id:\\"{id}\\", isAdmin:{return_graphql_boolean(is_admin)}, name:\\"{name}\\", password:\\"{password}\\"),'
@@ -759,3 +759,15 @@ def erase_neo4j(schema__graphql,server):
         print(result.single()[0])
         tx.commit()
     driver.close()
+
+
+def get_unique_graph_id(prefix):
+    global unique_graph_id_dict
+    stub = prefix + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    counter = 0
+    id = stub + '_' + format(counter, '06d')
+    while id in unique_graph_id_dict:
+        counter += 1
+        id = stub + '_' + format(counter, '06d')
+    unique_graph_id_dict[id] = id
+    return id
