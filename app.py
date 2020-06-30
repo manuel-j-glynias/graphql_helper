@@ -55,7 +55,7 @@ def reference_preflight(ref_string:str):
     reference_string, s = graphql_utils_extra.handle_references(authors_dict, journals_dict, reference_dict, ref_string.split(','))
     # print(s)
     if s != '':
-        m = graphql_utils_extra.send_mutation(s, server)
+        m = send_mutation(s, server)
         # print(m)
     reference_string = reference_string.replace('[','')
     reference_string = reference_string.replace(']','')

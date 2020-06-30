@@ -105,8 +105,8 @@ def createEditableSynonymList(gene_name:str, field:str, editor_id:str) -> (str,s
     id:str = get_unique_graph_id('esl_')
     ede_id:str = get_unique_graph_id('esle_')
 
-    s = f'''{id} : createEditableSynonymList(editDate: \\"{edit_date}\\", field: \\"{field}\\", id: \\"{id}\\", list:[\\"{gene_name}\\"] ),'''
-    s += f'{ede_id}: addEditableSynonymListEditor(editor:[\\"{editor_id}\\"], id:\\"{id}\\" ),'
+    s = f'''{id} : createEditableStringList(editDate: \\"{edit_date}\\", field: \\"{field}\\", id: \\"{id}\\", stringList:[\\"{gene_name}\\"] ),'''
+    s += f'{ede_id}: addEditableStringListEditor(editor:[\\"{editor_id}\\"], id:\\"{id}\\" ),'
     return s, id
 
 def create_new_omniGene(omni_gene:dict, jax_gene_dict:dict, curation_item:dict, editor_ids:dict,pmid_extractor:callable, reference_dict:dict, journal_dict:dict, author_dict:dict)->(str,str,str,str):

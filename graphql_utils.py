@@ -559,8 +559,8 @@ def createEditableStatement(statement:str, field:str, editor_id:str,pmid_extract
     return s, id
 
 def createEditableStatement_with_date(statement:str, field:str, editor_id:str,edit_date:str,pmid_extractor:callable,reference_dict:dict,journal_dict:dict,author_dict:dict) -> (str,str):
-    id:str = 'es_' + edit_date.replace('-','')
-    ede_id:str = 'ese_' + edit_date.replace('-','')
+    id:str = get_unique_graph_id('es_')
+    ede_id:str = get_unique_graph_id('ese_')
     s = f'''{id} : createEditableStatement(editDate: \\"{edit_date}\\", field: \\"{field}\\", id: \\"{id}\\",statement: \\"{statement}\\"),'''
     s += f'{ede_id}: addEditableStatementEditor(editor:[\\"{editor_id}\\"], id:\\"{id}\\" ),'
     s += write_references(id,statement,pmid_extractor,reference_dict,journal_dict,author_dict)
@@ -760,6 +760,8 @@ def erase_neo4j(schema__graphql,server):
         tx.commit()
     driver.close()
 
+
+unique_graph_id_dict = {}
 
 def get_unique_graph_id(prefix):
     global unique_graph_id_dict
