@@ -471,27 +471,32 @@ def ref_name_from_authors_pmid_and_year(authors, pmid, year):
 
 def create_reference_mutation(ref_id, ref):
     ref_name = ref_name_from_authors_pmid_and_year(ref['authors'], ref['pmid'], ref['year'])
-    s = f'''{ref_id}: createLiteratureReference(id: \\"{ref_id}\\", abstract: \\"{ref['abstract']}\\", shortReference: \\"{ref_name}\\", title: \\"{ref['title']}\\", volume: \\"{ref['volume']}\\", firstPage: \\"{ref['first_page']}\\", lastPage: \\"{ref['last_page']}\\", publicationYear: \\"{ref['year']}\\", DOI: \\"{ref['doi']}\\", PMID: \\"{ref['pmid']}\\"),'''
+    mut_id = get_unique_graph_id('mut_')
+    s = f'''{mut_id}: createLiteratureReference(id: \\"{ref_id}\\", abstract: \\"{ref['abstract']}\\", shortReference: \\"{ref_name}\\", title: \\"{ref['title']}\\", volume: \\"{ref['volume']}\\", firstPage: \\"{ref['first_page']}\\", lastPage: \\"{ref['last_page']}\\", publicationYear: \\"{ref['year']}\\", DOI: \\"{ref['doi']}\\", PMID: \\"{ref['pmid']}\\"),'''
     return s
 
 
 def create_author_mutation(id,surname,first):
-    s = f'''{id}: createAuthor(firstInitial: \\"{first}\\" , id: \\"{id}\\",surname: \\"{surname}\\"),'''
+    mut_id = get_unique_graph_id('mut_')
+    s = f'''{mut_id}: createAuthor(firstInitial: \\"{first}\\" , id: \\"{id}\\",surname: \\"{surname}\\"),'''
     return s
 
 
 def create_journal_mutation(journal, journal_id):
-    s = f'''{journal_id}: createJournal(id: \\"{journal_id}\\",name: \\"{journal}\\"),'''
+    mut_id = get_unique_graph_id('mut_')
+    s = f'''{mut_id}: createJournal(id: \\"{journal_id}\\",name: \\"{journal}\\"),'''
     return s
 
 
 def create_AddLiteratureReferenceJournal_mutation(ref_id, journal_id):
-    id = ref_id + '_' + journal_id
+    # id = ref_id + '_' + journal_id
+    id = get_unique_graph_id('mut_')
     s = f'{id}: addLiteratureReferenceJournal(id:\\"{ref_id}\\", journal:\\"{journal_id}\\"),'
     return s
 
 def create_AddLiteratureReferenceAuthors_mutation(ref_id, authors):
-    id = 'author_' +ref_id
+    # id = 'author_' +ref_id
+    id = get_unique_graph_id('mut_')
     author_string = '['
     for a in authors:
         if len(author_string)>1:
