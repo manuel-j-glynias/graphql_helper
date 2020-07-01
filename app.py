@@ -70,6 +70,21 @@ def reference_preflight(ref_string:str):
     data:dict = {'result':'success','refs':pmid_array}
     return data
 
+@app.route('/internet_reference_preflight/<string:url_string>', methods=['GET'])
+def internet_reference_preflight(url_string:str):
+    m = ''
+    pmid_array: list = []
+    for web_address_stub in url_string.split(','):
+        web_address_stub = web_address_stub.replace('_','/')
+        web_address_stub = web_address_stub.replace('*', '?')
+        web_address_stub = web_address_stub.replace('|', ',')
+        ref_id,s = graphql_utils_extra.create_internet_reference(web_address_stub)
+        pmid_array.append(ref_id)
+        m += s
+    send_mutation(m, server)
+    data: dict = {'result': 'success', 'refs': pmid_array}
+    return data
+
 
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ import datetime
 from graphql_utils import send_query, fix_author_id, get_reference_from_pmid_by_metapub, create_reference_mutation, \
     create_journal_mutation, create_AddLiteratureReferenceJournal_mutation, get_authors_names, create_author_mutation, \
     create_AddLiteratureReferenceAuthors_mutation, get_omnigene_id_from_entrez_id, createEditableStatement_with_date, \
-    get_gene_id_from_entrez_id, create_myGeneInfo_gene, create_uniprot_entry, get_unique_graph_id
+    get_gene_id_from_entrez_id, create_myGeneInfo_gene, create_uniprot_entry, get_unique_graph_id, get_acessed_date_as_string, get_name_for_internet_reference
 from informatics_utils import fetch_gene_id_by_gene_name, fetch_gene_info_by_gene_id, populate_omni_gene
 
 
@@ -189,4 +189,11 @@ def create_omni_gene(gene_name:str, curation_item:dict, editor_ids:dict,jax_gene
         s += m
         return s
 
+def create_internet_reference(web_address_stub):
+    ref_id: str = get_unique_graph_id('ref_')
+    web_address = 'http://' + web_address_stub
+    accessed: str = get_acessed_date_as_string(datetime.datetime.now())
+    ir_name: str = get_name_for_internet_reference(web_address, accessed)
+    s = f'{ref_id}: createInternetReference(accessedDate:\\"{accessed}\\", id:\\"{ref_id}\\", shortReference: \\"{ir_name}\\", webAddress:\\"{web_address}\\" ),'
+    return ref_id,s
 

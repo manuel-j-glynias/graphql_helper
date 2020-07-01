@@ -586,6 +586,8 @@ def get_acessed_date_as_string(d:datetime)-> str:
 def get_name_for_internet_reference(url:str ,accessed_date: str):
     pos1 = url.find('//') + 2
     pos2 = url.find('/',pos1)
+    if pos2==-1:
+        pos2 = None
     name = url[pos1:pos2]
     name += ' (accessed on:' + accessed_date + ')'
     return name
