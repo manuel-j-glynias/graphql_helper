@@ -52,7 +52,12 @@ def new_gene(gene_name):
 @app.route('/reference_preflight/<string:ref_string>', methods=['GET'])
 def reference_preflight(ref_string:str):
 
-    reference_string, s = graphql_utils_extra.handle_references(authors_dict, journals_dict, reference_dict, ref_string.split(','))
+    ref_string_list = ref_string.split(',')
+    no_dups_ref_string_list = []
+    for ref in ref_string_list:
+        if ref not in no_dups_ref_string_list:
+            no_dups_ref_string_list.append(ref)
+    reference_string, s = graphql_utils_extra.handle_references(authors_dict, journals_dict, reference_dict, no_dups_ref_string_list)
     # print(s)
     if s != '':
         m = send_mutation(s, server)
