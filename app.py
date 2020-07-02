@@ -58,10 +58,10 @@ def reference_preflight(ref_string:str):
         if ref not in no_dups_ref_string_list:
             no_dups_ref_string_list.append(ref)
     reference_string, s = graphql_utils_extra.handle_references(authors_dict, journals_dict, reference_dict, no_dups_ref_string_list)
-    # print(s)
+    print('mutation:',s)
     if s != '':
         m = send_mutation(s, server)
-        # print(m)
+        print('response:',m)
     reference_string = reference_string.replace('[','')
     reference_string = reference_string.replace(']','')
     reference_string = reference_string.replace('"','')
