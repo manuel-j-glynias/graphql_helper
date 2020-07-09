@@ -60,37 +60,40 @@ def get_journals(server:str)->dict:
 
 def handle_references(author_dict, journal_dict, reference_dict, pmid_array):
     s = ''
+    ref_id = None
     reference_string = '['
     for pubmed in pmid_array:
         if pubmed not in reference_dict:
             r = get_reference_from_pmid_by_metapub(pubmed)
-            ref_id = 'ref_' + pubmed
-            s += create_reference_mutation(ref_id, r)
-            reference_dict[pubmed] = ref_id
-            journal = r['journal']
-            if journal not in journal_dict:
-                journal_id = 'journal_' + fix_author_id(journal)
-                s += create_journal_mutation(journal, journal_id)
-                journal_dict[journal] = journal_id
-            else:
-                journal_id = journal_dict[journal]
-            s += create_AddLiteratureReferenceJournal_mutation(ref_id, journal_id)
-            authors = []
-            for author in r['authors']:
-                first, surname = get_authors_names(author)
-                key = fix_author_id(surname + '_' + first)
-                if key not in author_dict:
-                    author_id = 'author_' + surname + '_' + first
-                    author_id = fix_author_id(author_id)
-                    s += create_author_mutation(author_id, surname, first)
-                    author_dict[key] = author_id
+            if r is not None:
+                ref_id = 'ref_' + pubmed
+                s += create_reference_mutation(ref_id, r)
+                reference_dict[pubmed] = ref_id
+                journal = r['journal']
+                if journal not in journal_dict:
+                    journal_id = 'journal_' + fix_author_id(journal)
+                    s += create_journal_mutation(journal, journal_id)
+                    journal_dict[journal] = journal_id
                 else:
-                    author_id = author_dict[key]
-                authors.append(author_id)
-            s += create_AddLiteratureReferenceAuthors_mutation(ref_id, authors)
+                    journal_id = journal_dict[journal]
+                s += create_AddLiteratureReferenceJournal_mutation(ref_id, journal_id)
+                authors = []
+                for author in r['authors']:
+                    first, surname = get_authors_names(author)
+                    key = fix_author_id(surname + '_' + first)
+                    if key not in author_dict:
+                        author_id = 'author_' + surname + '_' + first
+                        author_id = fix_author_id(author_id)
+                        s += create_author_mutation(author_id, surname, first)
+                        author_dict[key] = author_id
+                    else:
+                        author_id = author_dict[key]
+                    authors.append(author_id)
+                s += create_AddLiteratureReferenceAuthors_mutation(ref_id, authors)
         else:
             ref_id = reference_dict[pubmed]
-        reference_string += '\\"' + ref_id + '\\",'
+        if ref_id is not None:
+            reference_string += '\\"' + ref_id + '\\",'
     reference_string += ']'
     return reference_string, s
 

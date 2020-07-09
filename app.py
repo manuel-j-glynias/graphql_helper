@@ -18,7 +18,7 @@ def write_to_dev():
 
 # server: str = 'localhost'
 # server: str = '161.35.115.213'
-server: str = write_to_prod()
+server: str = write_to_dev()
 
 editor_ids: dict = get_editor_ids(server)
 authors_dict: dict = graphql_utils_extra.get_authors(server)
